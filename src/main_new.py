@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from cmath import pi
 import rospy
 import math
 from cube_spotter.msg import cubeArray
@@ -14,14 +15,12 @@ rospy.init_node('cube_locator')
 i = 0
 
 def calc_position(img_x, img_y, alpha, beta, r, z):
-    img_x_max = 640
-    img_x_fov = 70
-    img_y_max = 480
-    img_y_fov = 70
+    img_x_fov = 70.0 / 180.0 * pi
+    img_y_fov = 70.0 / 180.0 * pi
 
     # Are these in the correct direction?
-    alpha_dash = (img_x - img_x_max / 2) / img_x_max * img_x_fov
-    beta_dash = (img_y - img_y_max / 2) / img_y_max * img_y_fov
+    alpha_dash = (img_x - 0.5) * img_x_fov
+    beta_dash = (img_y - 0.5) * img_y_fov
 
     # Are these correctly added?
     # sin(beta + beta_dash) = z / c
@@ -54,8 +53,9 @@ def calc_position(img_x, img_y, alpha, beta, r, z):
     x_dash = r_dash_x_for_x + r_dash_y_for_x
     y_dash = r_dash_y_for_y + r_dash_x_for_y
 
-    x = math.cos(alpha) * r
-    y = math.sin(alpha) * r
+    x = math.cos(alpha) * (r + 0.015)
+    y = math.sin(alpha) * (r + 0.015)
+    # 0.015 here is arbitrary constant
 
     x_total = x + x_dash
     y_total = y + y_dash
@@ -87,7 +87,7 @@ def cube_handler(msg):
         # So it makes sense to directly use the fkin values
         # Is this max here really needed?
         r = max(0.000001, math.sqrt(res.position.x**2 + res.position.y**2))
-        alpha = math.asin(res.position.y / r)
+        alpha = -math.asin(res.position.y / r)
         beta = res.angle.data
 
         # Subtract a certain amount from the z if you
@@ -103,7 +103,7 @@ def cube_handler(msg):
         rc.position = Point()
         rc.color.data = color
         rc.position.x = cube_x
-        rc.position.y = cube_y
+        rc.position.y = -cube_y
         rc.position.z = -0.04
         rca.cubes.append(rc)
         

@@ -15,7 +15,7 @@ rospy.init_node('cube_locator')
 i = 0
 
 def calc_position(img_x, img_y, alpha, beta, r, z):
-    img_x_fov = 70.0 / 180.0 * pi
+    img_x_fov = 60.0 / 180.0 * pi
     img_y_fov = 70.0 / 180.0 * pi
 
     # Are these in the correct direction?
@@ -53,8 +53,8 @@ def calc_position(img_x, img_y, alpha, beta, r, z):
     x_dash = r_dash_x_for_x + r_dash_y_for_x
     y_dash = r_dash_y_for_y + r_dash_x_for_y
 
-    x = math.cos(alpha) * r
-    y = math.sin(alpha) * r
+    x = math.cos(alpha) * (r + 0.015)
+    y = math.sin(alpha) * (r + 0.015)
     # 0.015 here is arbitrary constant
 
     x_total = x + x_dash
@@ -95,7 +95,7 @@ def cube_handler(msg):
         # But think about the fact that rc.position.z below
         # is set to -0.04, so the top of the cube might just be
         # below or at 0
-        z = res.position.z + 0.04
+        z = res.position.z - 0.0
 
         [cube_x, cube_y] = calc_position(img_x, img_y, alpha, beta, r, z)
 

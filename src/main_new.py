@@ -99,7 +99,7 @@ def cube_handler(msg):
         # But think about the fact that rc.position.z below
         # is set to -0.04, so the top of the cube might just be
         # below or at 0
-        z = res.position.z - 0.0
+        z = res.position.z + 0.03
 
         [cube_x, cube_y] = calc_position(img_x, img_y, alpha, beta, r, z)
 

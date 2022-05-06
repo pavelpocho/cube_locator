@@ -81,6 +81,10 @@ def cube_handler(msg):
         color = data.cube_colour
         img_x = data.normalisedCoordinateX
         img_y = data.normalisedCoordinateY
+
+        if img_x < 0.2 or img_x > 0.8 or img_y < 0.2 or img_y > 0.8:
+            continue
+
         res = fwd_kin_proxy(FKinMsgRequest())
 
         # This stuff is all calculated from the camera
